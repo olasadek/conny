@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b0f14"/>
+      <stop offset="100%" stop-color="#0e131a"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="600" fill="url(#bg)"/>
+  <rect x="14" y="14" width="372" height="572" fill="none" stroke="#4bfbff" stroke-opacity="0.35" stroke-width="1.5" stroke-dasharray="6 6"/>
+  <g stroke="#4bfbff" stroke-width="2" fill="none" stroke-opacity="0.8">
+    <path d="M14,44 L14,14 L44,14"/>
+    <path d="M356,14 L386,14 L386,44"/>
+    <path d="M14,556 L14,586 L44,586"/>
+    <path d="M356,586 L386,586 L386,556"/>
+  </g>
+  <text x="50%" y="48%" fill="#4bfbff" font-family="monospace" font-size="15" text-anchor="middle" opacity="0.8">◉ IMAGE PLACEHOLDER</text>
+  <text x="50%" y="56%" fill="#8494a0" font-family="monospace" font-size="12" text-anchor="middle">LEFT HAND OF DARKNESS</text>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b0f14"/>
+      <stop offset="100%" stop-color="#0e131a"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="400" fill="url(#bg)"/>
+  <rect x="14" y="14" width="572" height="372" fill="none" stroke="#4bfbff" stroke-opacity="0.35" stroke-width="1.5" stroke-dasharray="6 6"/>
+  <g stroke="#4bfbff" stroke-width="2" fill="none" stroke-opacity="0.8">
+    <path d="M14,44 L14,14 L44,14"/>
+    <path d="M556,14 L586,14 L586,44"/>
+    <path d="M14,356 L14,386 L44,386"/>
+    <path d="M556,386 L586,386 L586,356"/>
+  </g>
+  <text x="50%" y="48%" fill="#4bfbff" font-family="monospace" font-size="15" text-anchor="middle" opacity="0.8">◉ IMAGE PLACEHOLDER</text>
+  <text x="50%" y="56%" fill="#8494a0" font-family="monospace" font-size="12" text-anchor="middle">URSS FLIPPERCLAW</text>
+</svg>
