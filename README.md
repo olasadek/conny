@@ -172,11 +172,12 @@ For the **full stack** (static site + working `/api/*` functions talking to your
 ```bash
 npm install
 cp .env.example .env    # then fill in MONGODB_URI (and MONGODB_DB if you want a non-default name)
-npm run dev
-# equivalent to: npx vercel dev
+npx vercel dev
 ```
 
 First run will ask you to log in to Vercel and link the project (`vercel link`) — accept the defaults. `vercel dev` then serves the static files and the `api/*` functions together on one local port, reading `.env` for environment variables.
+
+Note: there's deliberately no `dev` script in `package.json` — `vercel dev` treats a `dev` script as a custom app server to proxy to, and a script that itself calls `vercel dev` trips its recursion guard (`DEV_RECURSIVE_INVOCATION`). Always invoke it directly as `npx vercel dev`.
 
 ## Deploying
 
