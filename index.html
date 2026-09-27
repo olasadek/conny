@@ -37,6 +37,7 @@
       <a href="#archive" class="nav-link">Archive</a>
       <a href="#logs" class="nav-link">Mission Logs</a>
       <a href="#sightings" class="nav-link">Sightings</a>
+      <a href="#duel" class="nav-link">Orbital Duel</a>
     </nav>
   </div>
 </header>
@@ -118,6 +119,40 @@
     </div>
   </section>
 
+  <!-- ================= ORBITAL DUEL ================= -->
+  <section id="duel" class="section">
+    <div class="section-inner">
+      <p class="section-eyebrow" data-reveal>SIMULATION CHAMBER</p>
+      <h2 class="section-title" data-reveal>Orbital Duel</h2>
+      <p class="section-sub" data-reveal>Pick two starfighters. Command runs the odds — the ice decides the rest.</p>
+
+      <div class="duel-picker" data-reveal>
+        <div class="duel-side" id="duelSideA">
+          <label class="duel-label" for="duelSelectA">Combatant A</label>
+          <select id="duelSelectA" class="duel-select"></select>
+          <div class="duel-loadout" id="duelLoadoutA">Loadout: —</div>
+        </div>
+
+        <div class="duel-vs" aria-hidden="true">VS</div>
+
+        <div class="duel-side" id="duelSideB">
+          <label class="duel-label" for="duelSelectB">Combatant B</label>
+          <select id="duelSelectB" class="duel-select"></select>
+          <div class="duel-loadout" id="duelLoadoutB">Loadout: —</div>
+        </div>
+      </div>
+
+      <div class="duel-odds" id="duelOdds" data-reveal></div>
+
+      <div class="duel-arena" id="duelArena" data-reveal>
+        <canvas id="duelCanvas" class="duel-canvas" width="800" height="320" aria-hidden="true"></canvas>
+        <div class="duel-result" id="duelResult"></div>
+      </div>
+
+      <button id="duelEngage" class="duel-engage-btn" data-reveal>ENGAGE</button>
+    </div>
+  </section>
+
 </main>
 
 <footer class="site-footer">
@@ -153,6 +188,12 @@
     <div class="card-body">
       <h3 class="card-title"></h3>
       <ul class="card-stats"></ul>
+
+      <div class="weapon-panel">
+        <label class="weapon-label">Equipped Weapon</label>
+        <select class="weapon-select"></select>
+        <p class="weapon-desc"></p>
+      </div>
     </div>
   </article>
 </template>
@@ -175,8 +216,42 @@
       <h3 class="card-title book-title"></h3>
       <p class="book-author"></p>
       <p class="book-rating" aria-label="rating"></p>
+
+      <button class="reviews-toggle" type="button">Reviews (<span class="reviews-count">0</span>)</button>
+
+      <div class="reviews-panel" hidden>
+        <ul class="reviews-list"></ul>
+
+        <form class="review-form">
+          <input type="text" name="name" class="review-input" placeholder="Your callsign" maxlength="60" required>
+          <select name="rating" class="review-input review-rating-input" required>
+            <option value="">Rating</option>
+            <option value="5">★★★★★</option>
+            <option value="4">★★★★☆</option>
+            <option value="3">★★★☆☆</option>
+            <option value="2">★★☆☆☆</option>
+            <option value="1">★☆☆☆☆</option>
+          </select>
+          <textarea name="text" class="review-input review-textarea" placeholder="What did you think?" maxlength="800" required></textarea>
+          <!-- honeypot field: hidden from real visitors, bots tend to fill every field -->
+          <input type="text" name="honeypot" class="review-honeypot" tabindex="-1" autocomplete="off">
+          <button type="submit" class="review-submit">Post Review</button>
+          <p class="review-status" aria-live="polite"></p>
+        </form>
+      </div>
     </div>
   </article>
+</template>
+
+<template id="reviewItemTemplate">
+  <li class="review-item">
+    <div class="review-item-head">
+      <span class="review-name"></span>
+      <span class="review-stars"></span>
+    </div>
+    <p class="review-text"></p>
+    <span class="review-date"></span>
+  </li>
 </template>
 
 <template id="logEntryTemplate">

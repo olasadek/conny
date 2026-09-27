@@ -1,0 +1,12 @@
+{
+  "name": "seal-command",
+  "private": true,
+  "type": "module",
+  "description": "S.E.A.L. Command — static frontend + Vercel serverless functions + MongoDB backend",
+  "scripts": {
+    "dev": "npx vercel dev"
+  },
+  "dependencies": {
+    "mongodb": "^7.0.0"
+  }
+}

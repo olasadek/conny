@@ -408,6 +408,46 @@ ul { list-style: none; margin: 0; padding: 0; }
   text-align: right;
 }
 
+.weapon-panel {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.weapon-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 0.4rem;
+}
+
+.weapon-select {
+  width: 100%;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  color: var(--amber);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.weapon-select:focus-visible {
+  outline: none;
+  border-color: var(--cyan);
+}
+
+.weapon-desc {
+  margin: 0.5rem 0 0;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
 /* ---------------- Archive-specific ---------------- */
 .book-author {
   color: var(--text-dim);
@@ -425,6 +465,177 @@ ul { list-style: none; margin: 0; padding: 0; }
 .status-tag[data-status="Reading"] { border-color: var(--amber-dim); color: var(--amber); }
 .status-tag[data-status="Completed"] { border-color: var(--cyan-dim); color: var(--cyan); }
 .status-tag[data-status="Want to Read"] { border-color: var(--text-faint); color: var(--text-dim); }
+
+/* ---------------- Reviews ---------------- */
+.reviews-toggle {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.55rem 0.8rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.reviews-toggle:hover {
+  border-color: var(--cyan-dim);
+  background: rgba(75, 251, 255, 0.06);
+}
+
+.reviews-panel {
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px dashed var(--border);
+}
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin: 0 0 1rem;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.review-item {
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.review-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.review-item-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.review-name {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text);
+}
+
+.review-stars {
+  color: var(--amber);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.review-text {
+  margin: 0 0 0.3rem;
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.review-date {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-faint);
+}
+
+.review-empty {
+  font-size: 0.8rem;
+  color: var(--text-faint);
+  font-style: italic;
+  list-style: none;
+}
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.review-input {
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: var(--radius);
+}
+
+.review-input:focus-visible {
+  outline: none;
+  border-color: var(--cyan);
+}
+
+.review-rating-input {
+  font-family: var(--font-mono);
+  color: var(--amber);
+  cursor: pointer;
+}
+
+.review-textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+.review-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.review-submit {
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  background: transparent;
+  border: 1px solid var(--cyan-dim);
+  color: var(--cyan);
+  padding: 0.55rem 1.1rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.review-submit:hover {
+  background: rgba(75, 251, 255, 0.08);
+}
+
+.review-submit:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.review-status {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  min-height: 1em;
+}
+
+/* ---------------- Offline / backend notice ---------------- */
+.offline-note {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--amber);
+  background: rgba(255, 179, 71, 0.08);
+  border: 1px solid var(--amber-dim);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.9rem;
+  max-width: 560px;
+  margin: -1.5rem 0 2rem;
+}
 
 /* ---------------- Mission Logs ---------------- */
 .logs-list {
@@ -600,12 +811,159 @@ ul { list-style: none; margin: 0; padding: 0; }
   background: rgba(75, 251, 255, 0.08);
 }
 
+/* ---------------- Orbital Duel ---------------- */
+.duel-picker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.duel-side {
+  flex: 1;
+  max-width: 320px;
+}
+
+.duel-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 0.4rem;
+}
+
+.duel-select {
+  width: 100%;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  padding: 0.65rem 0.8rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.duel-select:focus-visible {
+  outline: none;
+  border-color: var(--cyan);
+}
+
+.duel-loadout {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--amber);
+  font-family: var(--font-mono);
+}
+
+.duel-vs {
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  color: var(--text-faint);
+  letter-spacing: 0.1em;
+}
+
+.duel-odds {
+  max-width: 560px;
+  margin: 0 auto 2rem;
+  text-align: center;
+}
+
+.odds-bar {
+  position: relative;
+  height: 10px;
+  border-radius: 5px;
+  background: var(--amber-dim);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.odds-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--cyan);
+  box-shadow: 0 0 12px var(--cyan-dim);
+}
+
+.odds-label {
+  margin: 0.6rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.duel-arena {
+  max-width: 800px;
+  margin: 0 auto 2rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #05070a;
+}
+
+.duel-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.duel-result {
+  padding: 1rem 1.2rem;
+  min-height: 1.5em;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--cyan);
+  border-top: 1px solid var(--border);
+  text-shadow: 0 0 10px var(--cyan-dim);
+}
+
+.duel-engage-btn {
+  display: block;
+  margin: 0 auto;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  color: var(--bg);
+  background: var(--amber);
+  padding: 0.85rem 2.5rem;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  box-shadow: 0 0 20px var(--amber-dim);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.duel-engage-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 28px var(--amber);
+}
+
+.duel-engage-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+  transform: none;
+}
+
 /* =========================================================
    Responsive
 ========================================================= */
 @media (max-width: 720px) {
   .nav-toggle {
     display: flex;
+  }
+
+  .duel-picker {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .duel-side {
+    max-width: none;
+    width: 100%;
   }
 
   .site-nav {

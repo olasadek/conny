@@ -6,13 +6,35 @@
     </linearGradient>
   </defs>
   <rect width="600" height="400" fill="url(#bg)"/>
-  <rect x="14" y="14" width="572" height="372" fill="none" stroke="#4bfbff" stroke-opacity="0.35" stroke-width="1.5" stroke-dasharray="6 6"/>
+  <rect x="14" y="14" width="572" height="372" fill="none" stroke="#4bfbff" stroke-opacity="0.3" stroke-width="1.5" stroke-dasharray="6 6"/>
   <g stroke="#4bfbff" stroke-width="2" fill="none" stroke-opacity="0.8">
     <path d="M14,44 L14,14 L44,14"/>
     <path d="M556,14 L586,14 L586,44"/>
     <path d="M14,356 L14,386 L44,386"/>
     <path d="M556,386 L586,386 L586,356"/>
   </g>
-  <text x="50%" y="48%" fill="#4bfbff" font-family="monospace" font-size="15" text-anchor="middle" opacity="0.8">◉ IMAGE PLACEHOLDER</text>
-  <text x="50%" y="56%" fill="#8494a0" font-family="monospace" font-size="12" text-anchor="middle">FIELD REPORT 003</text>
+
+  <!-- big seal icon -->
+  <g transform="translate(300,185) scale(1.1)" opacity="0.92">
+    <ellipse cx="-72" cy="58" rx="24" ry="40" fill="#3a4a54" transform="rotate(-22 -72 58)"/>
+    <ellipse cx="72" cy="58" rx="24" ry="40" fill="#3a4a54" transform="rotate(22 72 58)"/>
+    <ellipse cx="0" cy="14" rx="80" ry="92" fill="#c7d6da" stroke="#4bfbff" stroke-opacity="0.6" stroke-width="2"/>
+    <circle cx="-26" cy="-6" r="7" fill="#0b0f14"/>
+    <circle cx="26" cy="-6" r="7" fill="#0b0f14"/>
+    <circle cx="-24" cy="-8" r="2" fill="#4bfbff"/>
+    <circle cx="28" cy="-8" r="2" fill="#4bfbff"/>
+    <ellipse cx="0" cy="20" rx="10" ry="7" fill="#0b0f14"/>
+    <path d="M0,26 Q0,32 -8,32" fill="none" stroke="#0b0f14" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M0,26 Q0,32 8,32" fill="none" stroke="#0b0f14" stroke-width="2.5" stroke-linecap="round"/>
+    <g stroke="#8494a0" stroke-width="1.5" stroke-linecap="round">
+      <path d="M-8,18 L-45,10"/>
+      <path d="M-8,23 L-46,23"/>
+      <path d="M-8,28 L-45,34"/>
+      <path d="M8,18 L45,10"/>
+      <path d="M8,23 L46,23"/>
+      <path d="M8,28 L45,34"/>
+    </g>
+  </g>
+
+  <text x="50%" y="370" fill="#8494a0" font-family="monospace" font-size="12" text-anchor="middle" letter-spacing="1">FIELD REPORT 003 — PLACEHOLDER</text>
 </svg>

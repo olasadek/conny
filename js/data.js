@@ -5,15 +5,35 @@
   No HTML editing required — main.js renders these into cards automatically.
 */
 
+/* ---------- WEAPONS CATALOG ---------- *
+ * The pool of weapons that can be equipped on any Hangar ship.
+ * `damage` feeds into Orbital Duel power calculations.
+ */
+const WEAPONS_CATALOG = [
+  { id: "ion-tusk", name: "Ion Tusk Cannon", damage: 72, description: "Twin-bore ion cannon modeled after a walrus tusk. Reliable, punchy, no frills." },
+  { id: "krill-torpedo", name: "Krill Torpedo Array", damage: 88, description: "Swarm-pattern torpedoes. Heavy hitting, slow reload." },
+  { id: "flare-decoy", name: "Flare Decoy Pod", damage: 40, description: "Low damage, high trickery. Bites during the confusion." },
+  { id: "barnacle-mines", name: "Barnacle Mine Layer", damage: 65, description: "Sticky proximity mines. Rewards patient pilots." },
+  { id: "sonar-lance", name: "Sonar Lance", damage: 58, description: "Focused sonar beam. Cuts through blubber-plate with ease." },
+  { id: "tide-cutter", name: "Tide Cutter Blade", damage: 80, description: "Close-range hydro-blade array. Not for the faint of flipper." },
+];
+
 /* ---------- THE HANGAR (assigned starfighters) ---------- *
  * To add a new starfighter, copy an object below and edit the fields.
+ * `id` must be unique — it's used as the key for the shared weapon
+ * loadout stored in the backend (see /api/weapons).
  * `image` should point at a file in /assets/images/hangar/
+ * `powerScore` is the ship's base combat power, used by the Orbital
+ * Duel minigame alongside the equipped weapon's damage.
  */
 const HANGAR_DATA = [
   {
+    id: "flipperclaw",
     name: "URSS Flipperclaw",
     class: "Interceptor",
     image: "assets/images/hangar/flipperclaw.svg",
+    powerScore: 78,
+    defaultWeapon: "ion-tusk",
     stats: [
       { label: "Thrust Class", value: "Mk. VII Whisker-Drive" },
       { label: "Armor Rating", value: "Blubber-Plate II" },
@@ -22,9 +42,12 @@ const HANGAR_DATA = [
     ],
   },
   {
+    id: "blubber-comet",
     name: "SS Blubber Comet",
     class: "Heavy Bomber",
     image: "assets/images/hangar/blubber-comet.svg",
+    powerScore: 90,
+    defaultWeapon: "krill-torpedo",
     stats: [
       { label: "Thrust Class", value: "Krill-Fusion IV" },
       { label: "Armor Rating", value: "Reinforced Tusk-Hull" },
@@ -33,9 +56,12 @@ const HANGAR_DATA = [
     ],
   },
   {
+    id: "orca-9",
     name: "ORCA-9 Prowler",
     class: "Stealth Recon",
     image: "assets/images/hangar/orca-9.svg",
+    powerScore: 70,
+    defaultWeapon: "flare-decoy",
     stats: [
       { label: "Thrust Class", value: "Silent Fin-Jet" },
       { label: "Armor Rating", value: "Low-Vis Composite" },
@@ -44,9 +70,12 @@ const HANGAR_DATA = [
     ],
   },
   {
+    id: "tideskipper",
     name: "MK.IV Tideskipper",
     class: "Light Fighter",
     image: "assets/images/hangar/tideskipper.svg",
+    powerScore: 64,
+    defaultWeapon: "sonar-lance",
     stats: [
       { label: "Thrust Class", value: "Twin Flipper-Boost" },
       { label: "Armor Rating", value: "Standard Neoprene" },
@@ -58,10 +87,13 @@ const HANGAR_DATA = [
 
 /* ---------- THE ARCHIVE (book library) ---------- *
  * status: "Reading" | "Completed" | "Want to Read"
- * rating: 0-5 (supports .5 halves)
+ * rating: 0-5 (supports .5 halves) — this is YOUR rating.
+ * `id` must be unique — it's used as the key for shared visitor
+ * reviews stored in the backend (see /api/reviews).
  */
 const ARCHIVE_DATA = [
   {
+    id: "dune",
     title: "Dune",
     author: "Frank Herbert",
     cover: "assets/images/archive/dune.svg",
@@ -69,6 +101,7 @@ const ARCHIVE_DATA = [
     status: "Completed",
   },
   {
+    id: "hail-mary",
     title: "Project Hail Mary",
     author: "Andy Weir",
     cover: "assets/images/archive/hail-mary.svg",
@@ -76,6 +109,7 @@ const ARCHIVE_DATA = [
     status: "Completed",
   },
   {
+    id: "leviathan-wakes",
     title: "Leviathan Wakes",
     author: "James S.A. Corey",
     cover: "assets/images/archive/leviathan-wakes.svg",
@@ -83,6 +117,7 @@ const ARCHIVE_DATA = [
     status: "Reading",
   },
   {
+    id: "left-hand",
     title: "The Left Hand of Darkness",
     author: "Ursula K. Le Guin",
     cover: "assets/images/archive/left-hand.svg",
@@ -90,6 +125,7 @@ const ARCHIVE_DATA = [
     status: "Completed",
   },
   {
+    id: "enders-game",
     title: "Ender's Game",
     author: "Orson Scott Card",
     cover: "assets/images/archive/enders-game.svg",
@@ -97,6 +133,7 @@ const ARCHIVE_DATA = [
     status: "Want to Read",
   },
   {
+    id: "children-of-time",
     title: "Children of Time",
     author: "Adrian Tchaikovsky",
     cover: "assets/images/archive/children-of-time.svg",
