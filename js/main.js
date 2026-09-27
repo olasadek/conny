@@ -209,6 +209,63 @@
     },
   };
 
+  const BooksAPI = {
+    LS_KEY: "seal-command:books",
+
+    async getAll() {
+      try {
+        const res = await fetch("/api/books");
+        if (!res.ok) throw new Error("bad status");
+        const data = await res.json();
+        localStorage.setItem(this.LS_KEY, JSON.stringify(data));
+        return { data, offline: false };
+      } catch {
+        let data = [];
+        try {
+          data = JSON.parse(localStorage.getItem(this.LS_KEY)) || [];
+        } catch {}
+        return { data, offline: true };
+      }
+    },
+
+    /* `book.id` present = edit an existing book; omitted = create a new one. */
+    async save(book) {
+      try {
+        const res = await fetch("/api/books", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(book),
+        });
+        if (!res.ok) throw new Error("bad status");
+        const saved = await res.json();
+        return { data: saved, offline: false };
+      } catch {
+        let all = [];
+        try {
+          all = JSON.parse(localStorage.getItem(this.LS_KEY)) || [];
+        } catch {}
+        const id =
+          book.id ||
+          `${(book.title || "book").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "book"}-${Math.random()
+            .toString(16)
+            .slice(2, 8)}`;
+        const saved = {
+          id,
+          title: book.title,
+          author: book.author,
+          cover: book.cover || "assets/images/archive/placeholder-book.svg",
+          rating: Number(book.rating) || 0,
+          status: book.status || "Want to Read",
+        };
+        const idx = all.findIndex((b) => b.id === id);
+        if (idx >= 0) all[idx] = saved;
+        else all.push(saved);
+        localStorage.setItem(this.LS_KEY, JSON.stringify(all));
+        return { data: saved, offline: true };
+      }
+    },
+  };
+
   /* Shared, mutable cache: shipId -> weaponId. Populated by hydrateWeapons(),
      read live by the Hangar weapon selects and the Orbital Duel game. */
   const weaponsState = {};
@@ -347,82 +404,195 @@
     });
   }
 
-  function renderArchive() {
-    const grid = document.getElementById("archiveGrid");
+  /* Builds one archive card (fragment) for `book`, pre-populated with
+     `reviews`. Wires the reviews toggle/form AND the edit toggle/form.
+     `opts.skipReveal` strips the scroll-reveal attribute for cards built
+     after the initial page-load pass (e.g. a book just added by the
+     visitor), since the IntersectionObserver has already run by then. */
+  function buildArchiveCard(book, reviews, opts = {}) {
     const cardTpl = document.getElementById("archiveCardTemplate");
-    if (!grid || !cardTpl || typeof ARCHIVE_DATA === "undefined") return [];
+    if (!cardTpl) return null;
 
-    const refs = [];
+    const bookState = { ...book };
+    const node = cardTpl.content.cloneNode(true);
+    const article = node.querySelector(".archive-card");
+    if (opts.skipReveal) article.removeAttribute("data-reveal");
 
-    ARCHIVE_DATA.forEach((book) => {
-      const node = cardTpl.content.cloneNode(true);
-      const img = node.querySelector(".cover-image");
-      img.src = book.cover;
-      img.alt = `${book.title} cover`;
+    const img = node.querySelector(".cover-image");
+    const titleEl = node.querySelector(".book-title");
+    const authorEl = node.querySelector(".book-author");
+    const ratingEl = node.querySelector(".book-rating");
+    const tag = node.querySelector(".status-tag");
 
-      const tag = node.querySelector(".status-tag");
-      tag.textContent = book.status;
-      tag.setAttribute("data-status", book.status);
+    function applyFields() {
+      img.src = bookState.cover;
+      img.alt = `${bookState.title} cover`;
+      titleEl.textContent = bookState.title;
+      authorEl.textContent = `by ${bookState.author}`;
+      ratingEl.textContent = starString(bookState.rating);
+      tag.textContent = bookState.status;
+      tag.setAttribute("data-status", bookState.status);
+    }
+    applyFields();
 
-      node.querySelector(".book-title").textContent = book.title;
-      node.querySelector(".book-author").textContent = `by ${book.author}`;
-      node.querySelector(".book-rating").textContent = starString(book.rating);
+    // --- Edit toggle/form ---
+    const editToggle = node.querySelector(".edit-toggle");
+    const editPanel = node.querySelector(".edit-panel");
+    const editForm = node.querySelector(".edit-form");
+    const editStatus = node.querySelector(".edit-status");
+    const editCancel = node.querySelector(".edit-cancel");
 
-      const toggleBtn = node.querySelector(".reviews-toggle");
-      const countEl = node.querySelector(".reviews-count");
-      const panel = node.querySelector(".reviews-panel");
-      const listEl = node.querySelector(".reviews-list");
-      const form = node.querySelector(".review-form");
-      const statusEl = node.querySelector(".review-status");
-      const submitBtn = node.querySelector(".review-submit");
+    editToggle.addEventListener("click", () => {
+      if (editPanel.hidden) {
+        editForm.elements.title.value = bookState.title;
+        editForm.elements.author.value = bookState.author;
+        editForm.elements.cover.value = bookState.cover;
+        editForm.elements.rating.value = String(bookState.rating);
+        editForm.elements.status.value = bookState.status;
+      }
+      editPanel.hidden = !editPanel.hidden;
+    });
 
-      toggleBtn.addEventListener("click", () => {
-        panel.hidden = !panel.hidden;
+    editCancel.addEventListener("click", () => {
+      editPanel.hidden = true;
+    });
+
+    editForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const title = editForm.elements.title.value.trim();
+      const author = editForm.elements.author.value.trim();
+      const cover = editForm.elements.cover.value.trim() || bookState.cover;
+      const rating = Number(editForm.elements.rating.value);
+      const status = editForm.elements.status.value;
+
+      if (!title || !author) {
+        editStatus.textContent = "Title and author are required.";
+        return;
+      }
+
+      editStatus.textContent = "Saving...";
+      const { data: saved, offline } = await BooksAPI.save({ id: bookState.id, title, author, cover, rating, status });
+      Object.assign(bookState, saved);
+      applyFields();
+      editStatus.textContent = offline ? "Saved locally (backend not detected)." : "Saved.";
+      editPanel.hidden = true;
+      if (offline) noteOffline(document.querySelector("#archive .section-sub"));
+      setTimeout(() => {
+        editStatus.textContent = "";
+      }, 3000);
+    });
+
+    // --- Reviews toggle/list/form ---
+    const toggleBtn = node.querySelector(".reviews-toggle");
+    const countEl = node.querySelector(".reviews-count");
+    const panel = node.querySelector(".reviews-panel");
+    const listEl = node.querySelector(".reviews-list");
+    const form = node.querySelector(".review-form");
+    const statusEl = node.querySelector(".review-status");
+    const submitBtn = node.querySelector(".review-submit");
+
+    countEl.textContent = String(reviews.length);
+    renderReviewList(listEl, reviews);
+
+    toggleBtn.addEventListener("click", () => {
+      panel.hidden = !panel.hidden;
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = form.elements.name.value.trim();
+      const rating = Number(form.elements.rating.value);
+      const text = form.elements.text.value.trim();
+      const honeypot = form.elements.honeypot.value;
+
+      if (!name || !text || !(rating >= 1 && rating <= 5)) {
+        statusEl.textContent = "Fill in a callsign, rating, and review first.";
+        return;
+      }
+
+      submitBtn.disabled = true;
+      statusEl.textContent = "Transmitting...";
+
+      const { data: list, offline } = await ReviewsAPI.add(bookState.id, { name, rating, text, honeypot });
+      renderReviewList(listEl, list);
+      countEl.textContent = String(list.length);
+      form.reset();
+      statusEl.textContent = offline ? "Saved to this browser only (backend not detected)." : "Review posted.";
+      submitBtn.disabled = false;
+      if (offline) noteOffline(document.querySelector("#archive .section-sub"));
+      setTimeout(() => {
+        statusEl.textContent = "";
+      }, 4000);
+    });
+
+    return node;
+  }
+
+  async function renderArchive() {
+    const grid = document.getElementById("archiveGrid");
+    const addBookTpl = document.getElementById("addBookCardTemplate");
+    if (!grid || typeof ARCHIVE_DATA === "undefined") return;
+
+    const [booksResult, reviewsResult] = await Promise.all([BooksAPI.getAll(), ReviewsAPI.getAll()]);
+    const customBooks = booksResult.data || [];
+    const reviewsByBook = reviewsResult.data || {};
+    if (booksResult.offline || reviewsResult.offline) {
+      noteOffline(document.querySelector("#archive .section-sub"));
+    }
+
+    const overridesById = new Map(customBooks.map((b) => [b.id, b]));
+    const seedIds = new Set(ARCHIVE_DATA.map((b) => b.id));
+
+    ARCHIVE_DATA.forEach((seedBook) => {
+      const merged = { ...seedBook, ...(overridesById.get(seedBook.id) || {}) };
+      const node = buildArchiveCard(merged, reviewsByBook[merged.id] || []);
+      if (node) grid.appendChild(node);
+    });
+
+    customBooks
+      .filter((b) => !seedIds.has(b.id))
+      .forEach((b) => {
+        const node = buildArchiveCard(b, reviewsByBook[b.id] || []);
+        if (node) grid.appendChild(node);
       });
+
+    if (addBookTpl) {
+      const addFragment = addBookTpl.content.cloneNode(true);
+      const addCardEl = addFragment.querySelector(".add-book-card");
+      const form = addFragment.querySelector(".add-book-form");
+      const statusEl = addFragment.querySelector(".edit-status");
+      const submitBtn = addFragment.querySelector(".add-book-submit");
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const name = form.elements.name.value.trim();
+        const title = form.elements.title.value.trim();
+        const author = form.elements.author.value.trim();
+        const cover = form.elements.cover.value.trim();
         const rating = Number(form.elements.rating.value);
-        const text = form.elements.text.value.trim();
-        const honeypot = form.elements.honeypot.value;
+        const status = form.elements.status.value;
 
-        if (!name || !text || !(rating >= 1 && rating <= 5)) {
-          statusEl.textContent = "Fill in a callsign, rating, and review first.";
+        if (!title || !author) {
+          statusEl.textContent = "Title and author are required.";
           return;
         }
 
         submitBtn.disabled = true;
-        statusEl.textContent = "Transmitting...";
+        statusEl.textContent = "Adding...";
 
-        const { data: list, offline } = await ReviewsAPI.add(book.id, { name, rating, text, honeypot });
-        renderReviewList(listEl, list);
-        countEl.textContent = String(list.length);
+        const { data: saved, offline } = await BooksAPI.save({ title, author, cover, rating, status });
+        const cardNode = buildArchiveCard(saved, [], { skipReveal: true });
+        if (cardNode) grid.insertBefore(cardNode, addCardEl);
         form.reset();
-        statusEl.textContent = offline ? "Saved to this browser only (backend not detected)." : "Review posted.";
+        statusEl.textContent = offline ? "Saved locally (backend not detected)." : "Book added.";
         submitBtn.disabled = false;
         if (offline) noteOffline(document.querySelector("#archive .section-sub"));
         setTimeout(() => {
           statusEl.textContent = "";
-        }, 4000);
+        }, 3000);
       });
 
-      grid.appendChild(node);
-      refs.push({ book, countEl, listEl });
-    });
-
-    return refs;
-  }
-
-  async function hydrateReviews(refs) {
-    const { data, offline } = await ReviewsAPI.getAll();
-    if (offline) noteOffline(document.querySelector("#archive .section-sub"));
-
-    refs.forEach(({ book, countEl, listEl }) => {
-      const list = data[book.id] || [];
-      countEl.textContent = String(list.length);
-      renderReviewList(listEl, list);
-    });
+      grid.appendChild(addFragment);
+    }
   }
 
   function formatDate(dateStr) {
@@ -758,20 +928,19 @@
   }
 
   /* ==================== INIT ==================== */
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", async () => {
     initStarfield();
     initNav();
 
     const hangarRefs = renderHangar();
-    const archiveRefs = renderArchive();
     renderLogs();
     renderSightings();
+    await renderArchive(); // builds its own cards after fetching books+reviews
 
     initScrollRevealShared();
     initEasterEgg();
     initDuel();
 
     hydrateWeapons(hangarRefs);
-    hydrateReviews(archiveRefs);
   });
 })();

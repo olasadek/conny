@@ -624,6 +624,152 @@ ul { list-style: none; margin: 0; padding: 0; }
   min-height: 1em;
 }
 
+/* ---------------- Book edit / add ---------------- */
+.book-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.book-title-row .book-title {
+  margin-bottom: 0.5rem;
+}
+
+.edit-toggle {
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  border-radius: var(--radius);
+  width: 26px;
+  height: 26px;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.edit-toggle:hover {
+  border-color: var(--cyan-dim);
+  color: var(--cyan);
+}
+
+.edit-panel {
+  margin: 0.8rem 0 1rem;
+  padding: 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-panel-alt);
+}
+
+.edit-form,
+.add-book-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.edit-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  flex: 1;
+}
+
+.edit-label-optional {
+  text-transform: none;
+  letter-spacing: 0;
+  opacity: 0.7;
+}
+
+.edit-input {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: var(--radius);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.edit-input:focus-visible {
+  outline: none;
+  border-color: var(--cyan);
+}
+
+.edit-row {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.edit-save {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  background: transparent;
+  border: 1px solid var(--cyan-dim);
+  color: var(--cyan);
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.edit-save:hover {
+  background: rgba(75, 251, 255, 0.08);
+}
+
+.edit-cancel {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.edit-cancel:hover {
+  border-color: var(--text-faint);
+}
+
+.edit-status {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  min-height: 1em;
+}
+
+.add-book-card {
+  display: flex;
+  align-items: stretch;
+  border-style: dashed;
+  border-color: var(--border);
+}
+
+.add-book-body {
+  width: 100%;
+  padding-top: 1.3rem;
+}
+
+.add-book-submit {
+  align-self: flex-start;
+}
+
 /* ---------------- Offline / backend notice ---------------- */
 .offline-note {
   font-family: var(--font-mono);

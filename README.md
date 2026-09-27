@@ -3,10 +3,11 @@
 A playful sci-fi space agency site run by a seal — combining seals, sci-fi/space books, and War Thunder. Static HTML/CSS/JS frontend + a small serverless backend (Vercel Functions + MongoDB) for shared, live features:
 
 - **Book reviews** — any visitor can leave a rating + review on any Archive book; everyone sees the same list.
+- **Editable/addable books** — any visitor can edit a book's title/author/cover/rating/status, or add a brand-new book, right from the site.
 - **Weapon loadouts** — every Hangar starfighter has a swappable weapon, shared across all visitors.
 - **Orbital Duel** — pick two starfighters, Command runs the odds (ship power + equipped weapon), and one wins.
 
-Vercel hosts the static files *and* the two small API functions; MongoDB (Atlas's free tier works fine) holds the data. You'll need to create a free MongoDB Atlas cluster yourself — see **How the backend works** below.
+Vercel hosts the static files *and* the three small API functions; MongoDB (Atlas's free tier works fine) holds the data. You'll need to create a free MongoDB Atlas cluster yourself — see **How the backend works** below.
 
 ## File structure
 
@@ -20,7 +21,8 @@ conny/
 │   └── main.js                   # rendering, starfield, nav, API calls, Orbital Duel, easter egg
 ├── api/
 │   ├── reviews.js                # GET/POST /api/reviews  (MongoDB collection: "reviews")
-│   └── weapons.js                # GET/POST /api/weapons  (MongoDB collection: "weapons")
+│   ├── weapons.js                # GET/POST /api/weapons  (MongoDB collection: "weapons")
+│   └── books.js                  # GET/POST /api/books    (MongoDB collection: "books")
 ├── lib/
 │   └── mongodb.js                # shared, connection-caching MongoDB client helper
 ├── assets/
@@ -65,20 +67,33 @@ every Hangar card and the Orbital Duel power calculation:
 
 ### Add a book (The Archive)
 
-Copy an object inside `ARCHIVE_DATA` in `js/data.js`:
+You don't need to edit code for this anymore — there's a **"+ Add a Book"**
+card at the end of the Archive grid on the live site, and every book has an
+✎ **edit** button (next to its title) to change its title/author/cover/
+rating/status. Both are open to any visitor and save to the shared MongoDB
+`books` collection via `/api/books`.
+
+Editing a book that came from `ARCHIVE_DATA` doesn't change `js/data.js` —
+it saves an *override* (keyed by the book's `id`) that the frontend layers
+on top of the seed data every time the page loads. Books added through the
+"+ Add a Book" form are stored the same way, just without a matching seed
+entry.
+
+You can still seed a book directly in code by copying an object inside
+`ARCHIVE_DATA` in `js/data.js` instead:
 
 ```js
 {
-  id: "your-book",             // unique — used as the key for its shared reviews
+  id: "your-book",             // unique — used as the key for its shared reviews AND edits
   title: "Book Title",
   author: "Author Name",
   cover: "assets/images/archive/book-cover.jpg",
-  rating: 4.5,                 // YOUR rating, 0-5, supports halves
+  rating: 4.5,                 // starting rating, 0-5, supports halves (editable later on-site)
   status: "Reading",           // "Reading" | "Completed" | "Want to Read"
 },
 ```
 
-Visitor reviews are separate from your own `rating` field above — they're
+Visitor reviews are separate from the `rating` field above — they're
 submitted through the site and stored in the backend, not in this file.
 
 ### Add a mission log entry
@@ -139,12 +154,13 @@ Both open the same "RECRUIT ACCEPTED" secret overlay. Edit the content in the
 
 ## How the backend works
 
-Two Vercel serverless functions — Vercel automatically maps any file under `api/` to a route of the same name, so `api/reviews.js` serves `/api/reviews` and `api/weapons.js` serves `/api/weapons`, no routing config needed:
+Three Vercel serverless functions — Vercel automatically maps any file under `api/` to a route of the same name, so `api/reviews.js` serves `/api/reviews`, no routing config needed:
 
-- **`/api/reviews`** — `GET` returns all reviews grouped by book (or `?bookId=x` for one book); `POST { bookId, name, rating, text }` inserts a review document. Backed by the `reviews` collection (one document per review, with a `bookId` field matching the book's `id` from `js/data.js`).
+- **`/api/reviews`** — `GET` returns all reviews grouped by book (or `?bookId=x` for one book); `POST { bookId, name, rating, text }` inserts a review document. Backed by the `reviews` collection (one document per review, with a `bookId` field matching the book's `id`).
 - **`/api/weapons`** — `GET` returns the full shipId → weaponId map; `POST { shipId, weaponId }` upserts one ship's loadout. Backed by the `weapons` collection (one document per ship, `_id` = the ship's `id`).
+- **`/api/books`** — `GET` returns every added/edited book; `POST { id?, title, author, cover, rating, status }` upserts one. With `id` set, it edits that exact book (overriding a seed book from `ARCHIVE_DATA`, or updating a previously-added one); without `id`, it always creates a new book (the server generates an id from the title so it can never collide with an existing one). Backed by the `books` collection, `_id` = the book's id. The frontend merges this collection on top of `ARCHIVE_DATA` at render time — nothing here is ever written back into `js/data.js`.
 
-Both functions share a connection-caching MongoDB client in `lib/mongodb.js`.
+All three functions share a connection-caching MongoDB client in `lib/mongodb.js`.
 
 **You need a MongoDB database.** The free tier of [MongoDB Atlas](https://www.mongodb.com/cloud/atlas/register) works well:
 

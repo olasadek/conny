@@ -213,9 +213,54 @@
       <span class="card-tag status-tag"></span>
     </div>
     <div class="card-body">
-      <h3 class="card-title book-title"></h3>
+      <div class="book-title-row">
+        <h3 class="card-title book-title"></h3>
+        <button class="edit-toggle" type="button" aria-label="Edit book">✎</button>
+      </div>
       <p class="book-author"></p>
       <p class="book-rating" aria-label="rating"></p>
+
+      <div class="edit-panel" hidden>
+        <form class="edit-form">
+          <label class="edit-label">Title
+            <input type="text" name="title" class="edit-input" maxlength="120" required>
+          </label>
+          <label class="edit-label">Author
+            <input type="text" name="author" class="edit-input" maxlength="120" required>
+          </label>
+          <label class="edit-label">Cover image URL or path
+            <input type="text" name="cover" class="edit-input" maxlength="500" placeholder="assets/images/archive/your-cover.jpg">
+          </label>
+          <div class="edit-row">
+            <label class="edit-label">Rating
+              <select name="rating" class="edit-input">
+                <option value="5">★★★★★ (5)</option>
+                <option value="4.5">★★★★⯨ (4.5)</option>
+                <option value="4">★★★★☆ (4)</option>
+                <option value="3.5">★★★⯨☆ (3.5)</option>
+                <option value="3">★★★☆☆ (3)</option>
+                <option value="2.5">★★⯨☆☆ (2.5)</option>
+                <option value="2">★★☆☆☆ (2)</option>
+                <option value="1.5">★⯨☆☆☆ (1.5)</option>
+                <option value="1">★☆☆☆☆ (1)</option>
+                <option value="0">☆☆☆☆☆ (0)</option>
+              </select>
+            </label>
+            <label class="edit-label">Status
+              <select name="status" class="edit-input">
+                <option value="Reading">Reading</option>
+                <option value="Completed">Completed</option>
+                <option value="Want to Read">Want to Read</option>
+              </select>
+            </label>
+          </div>
+          <div class="edit-actions">
+            <button type="submit" class="edit-save">Save</button>
+            <button type="button" class="edit-cancel">Cancel</button>
+          </div>
+          <p class="edit-status" aria-live="polite"></p>
+        </form>
+      </div>
 
       <button class="reviews-toggle" type="button">Reviews (<span class="reviews-count">0</span>)</button>
 
@@ -252,6 +297,50 @@
     <p class="review-text"></p>
     <span class="review-date"></span>
   </li>
+</template>
+
+<template id="addBookCardTemplate">
+  <article class="card add-book-card" data-reveal>
+    <div class="card-body add-book-body">
+      <h3 class="card-title">+ Add a Book</h3>
+      <form class="add-book-form">
+        <label class="edit-label">Title
+          <input type="text" name="title" class="edit-input" maxlength="120" required>
+        </label>
+        <label class="edit-label">Author
+          <input type="text" name="author" class="edit-input" maxlength="120" required>
+        </label>
+        <label class="edit-label">Cover image URL <span class="edit-label-optional">(optional)</span>
+          <input type="text" name="cover" class="edit-input" maxlength="500" placeholder="leave blank to use a placeholder">
+        </label>
+        <div class="edit-row">
+          <label class="edit-label">Rating
+            <select name="rating" class="edit-input">
+              <option value="5">★★★★★ (5)</option>
+              <option value="4.5">★★★★⯨ (4.5)</option>
+              <option value="4">★★★★☆ (4)</option>
+              <option value="3.5">★★★⯨☆ (3.5)</option>
+              <option value="3">★★★☆☆ (3)</option>
+              <option value="2.5">★★⯨☆☆ (2.5)</option>
+              <option value="2">★★☆☆☆ (2)</option>
+              <option value="1.5">★⯨☆☆☆ (1.5)</option>
+              <option value="1">★☆☆☆☆ (1)</option>
+              <option value="0">☆☆☆☆☆ (0)</option>
+            </select>
+          </label>
+          <label class="edit-label">Status
+            <select name="status" class="edit-input">
+              <option value="Want to Read">Want to Read</option>
+              <option value="Reading">Reading</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </label>
+        </div>
+        <button type="submit" class="edit-save add-book-submit">Add Book</button>
+        <p class="edit-status" aria-live="polite"></p>
+      </form>
+    </div>
+  </article>
 </template>
 
 <template id="logEntryTemplate">
